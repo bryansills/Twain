@@ -4,17 +4,48 @@ android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
+    def versionMajor = 0
+    def versionMinor = 1
+    def versionPatch = 0
+
     defaultConfig {
         applicationId "ninja.bryansills.twain"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+
+        versionCode getTimestamp()
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    signingConfigs {
+        release {
+            try {
+                /* Place the below properties in a 'gradle.properties' file in the 'app/' folder */
+                storeFile file(KEYSTORE)
+                storePassword KEYSTORE_PASSWORD
+                keyAlias KEY_ALIAS
+                keyPassword KEY_PASSWORD
+            }
+            catch (ex) {
+                println("-------------------------------------------------------------")
+                println("Release build signing is not set up on this machine. Release builds will fail.")
+                println("-------------------------------------------------------------")
+                println(ex)
+                println("-------------------------------------------------------------")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -22,4 +53,13 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:support-v4:22.0.0'
+}
+
+def getTimestamp() {
+    TimeZone.setDefault(TimeZone.getTimeZone('UTC'))
+    def now = new Date()
+    def formattedDate = now.format('yyMMddHHmm')
+    def code = formattedDate.toInteger()
+    return code
 }
