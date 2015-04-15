@@ -10,7 +10,8 @@
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
     android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
     android:paddingRight="?android:attr/listPreferredItemPaddingRight"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:background="@drawable/item_ripple">
 
     <TextView
         android:id="@+id/list_item_entry_name"
