@@ -11,14 +11,25 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ninja.bryansills.twain.App;
+import ninja.bryansills.twain.AppComponent;
 import ninja.bryansills.twain.R;
 import ninja.bryansills.twain.model.Entry;
 import ninja.bryansills.twain.ui.adapter.EntryAdapter;
+import ninja.bryansills.twain.ui.dagger.DaggerEntriesComponent;
+import ninja.bryansills.twain.ui.dagger.EntriesComponent;
+import ninja.bryansills.twain.ui.dagger.EntriesModule;
+import ninja.bryansills.twain.ui.presenter.EntriesPresenter;
 
 /**
  * Created by bsills on 4/15/15.
  */
 public class EntriesFragment extends Fragment {
+
+    @Inject
+    EntriesPresenter entriesPresenter;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -26,6 +37,17 @@ public class EntriesFragment extends Fragment {
 
     public static EntriesFragment newInstance() {
         return new EntriesFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        DaggerEntriesComponent.builder()
+                .appComponent((AppComponent) App.get(getActivity()).component())
+                .entriesModule(new EntriesModule())
+                .build()
+                .inject(this);
     }
 
     @Override
@@ -42,10 +64,7 @@ public class EntriesFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        List<Entry> items = new ArrayList<Entry>();
-        for (int i = 1; i <= 100; i++) {
-            items.add(new Entry("Item " + i, i));
-        }
+        List<Entry> items = entriesPresenter.onCreateView();
 
         mAdapter = new EntryAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
