@@ -44,7 +44,7 @@ public class EntriesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         DaggerEntriesComponent.builder()
-                .appComponent((AppComponent) App.get(getActivity()).component())
+                .appComponent(App.get(getActivity()).component())
                 .entriesModule(new EntriesModule())
                 .build()
                 .inject(this);
